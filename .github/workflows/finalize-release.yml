@@ -1,0 +1,80 @@
+name: Finalize Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to finalize, for example v0.1.0"
+        required: true
+        type: string
+      force_republish:
+        description: "Replace existing aggregate assets if they already exist"
+        required: false
+        default: false
+        type: boolean
+      prerelease:
+        description: "Keep the finalized release marked as a prerelease"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Download current release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          gh release view "$TAG_NAME" -R zinchain/zincha-releases >/dev/null
+          mkdir -p dist/release-assets
+          gh release download "$TAG_NAME" -R zinchain/zincha-releases --dir dist/release-assets --pattern '*' --clobber
+
+      - name: Validate and generate aggregate metadata
+        env:
+          TAG_NAME: ${{ inputs.tag }}
+          RELEASE_DIR: dist/release-assets
+          OUT_DIR: dist/finalized
+        run: node scripts/finalize-release.mjs
+
+      - name: Upload aggregate release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ inputs.tag }}
+          FORCE_REPUBLISH: ${{ inputs.force_republish }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [ "$FORCE_REPUBLISH" = "true" ]; then
+            args+=(--clobber)
+          fi
+          gh release upload "$TAG_NAME" -R zinchain/zincha-releases \
+            dist/finalized/SHA256SUMS \
+            dist/finalized/release-manifest.json \
+            "${args[@]}"
+
+      - name: Publish release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ inputs.tag }}
+          PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          set -euo pipefail
+          args=(--draft=false --notes-file dist/finalized/RELEASE_NOTES.md)
+          if [ "$PRERELEASE" = "true" ]; then
+            args+=(--prerelease=true)
+          else
+            args+=(--prerelease=false)
+          fi
+          gh release edit "$TAG_NAME" -R zinchain/zincha-releases "${args[@]}"
