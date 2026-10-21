@@ -19,7 +19,7 @@ SOURCE = "a" * 40
 
 
 class DownloadChecks(unittest.TestCase):
-    def fixture(self, selected="linux-x86_64", extra=None, wrong_arch=False):
+    def fixture(self, selected="linux-x86_64", extra=None, wrong_arch=False, executable_mode=0o755):
         temporary = tempfile.TemporaryDirectory(prefix="zincha-download-test-")
         self.addCleanup(temporary.cleanup)
         root = Path(temporary.name)
@@ -55,7 +55,9 @@ class DownloadChecks(unittest.TestCase):
         else:
             with tarfile.open(archive, "w:gz") as bundle:
                 for name, data in files.items():
-                    info = tarfile.TarInfo(name); info.size = len(data); bundle.addfile(info, io.BytesIO(data))
+                    info = tarfile.TarInfo(name); info.size = len(data)
+                    info.mode = executable_mode if name.endswith("/zincha") else 0o644
+                    bundle.addfile(info, io.BytesIO(data))
         record["sha256"] = hashlib.sha256(archive.read_bytes()).hexdigest()
         record["size_bytes"] = archive.stat().st_size
         build = {**record, "schema_version": 1, "artifact": archive.name, "release_tag": TAG,
@@ -98,6 +100,10 @@ class DownloadChecks(unittest.TestCase):
     def test_wrong_architecture(self):
         root, _ = self.fixture(wrong_arch=True); result = self.run_check(root)
         self.assertNotEqual(result.returncode, 0); self.assertIn("ELF architecture mismatch", result.stderr)
+
+    def test_nonexecutable_archive_is_not_repaired_silently(self):
+        root, _ = self.fixture(executable_mode=0o644); result = self.run_check(root)
+        self.assertNotEqual(result.returncode, 0); self.assertIn("not executable", result.stderr)
 
     def test_draft_is_not_a_finalized_download(self):
         root, _ = self.fixture()

@@ -87,12 +87,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ inputs.tag }}
           PRERELEASE: ${{ inputs.prerelease }}
+          RELEASE_KIND: ${{ inputs.release_kind }}
         run: |
           set -euo pipefail
           args=(--tag "$TAG_NAME" --draft=false --notes-file dist/finalized/RELEASE_NOTES.md)
+          title="Zincha $TAG_NAME"
+          if [ "$RELEASE_KIND" = "cli" ]; then title="Zincha CLI $TAG_NAME"; fi
           if [ "$PRERELEASE" = "true" ]; then
             args+=(--prerelease=true)
+            title="$title — Vega prerelease"
           else
             args+=(--prerelease=false)
           fi
+          args+=(--title "$title")
           gh release edit "$TAG_NAME" -R zinchain/zincha-releases "${args[@]}"

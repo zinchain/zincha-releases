@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import platform
 import re
+import stat
 import struct
 import tarfile
 import zipfile
@@ -77,6 +78,7 @@ def main():
         with zipfile.ZipFile(archive) as bundle:
             for member in bundle.infolist():
                 require(member.filename in expected_files and member.filename not in payloads, "unexpected or duplicate ZIP member")
+                require(stat.S_IFMT(member.external_attr >> 16) in (0, stat.S_IFREG), "linked or special ZIP member")
                 require(member.file_size <= 256 * 1024 * 1024, "oversized ZIP member")
                 payloads[member.filename] = bundle.read(member)
     else:
@@ -86,6 +88,8 @@ def main():
                     require(member.name == package, "unexpected archive directory")
                     continue
                 require(member.isfile() and member.name in expected_files and member.name not in payloads, "unexpected, linked or duplicate tar member")
+                if member.name == f"{package}/{executable}":
+                    require(member.mode & 0o111, "binary is not executable in the archive")
                 require(member.size <= 256 * 1024 * 1024, "oversized tar member")
                 payloads[member.name] = bundle.extractfile(member).read()
     require(set(payloads) == expected_files, "incomplete package contents")

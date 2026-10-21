@@ -212,7 +212,7 @@ const assetLines = artifacts
   )
   .join("\n");
 
-const notes = `# Zincha ${tag}
+const notes = `# ${releaseKind === "cli" ? "Zincha CLI" : "Zincha"} ${tag}
 
 ${prerelease ? "Vega testnet prerelease. " : ""}${releaseKind === "cli" ? "This release updates only the public developer CLI. It does not include or replace the node runtime; the existing node release remains unchanged." : "This release contains public CLI and node binary archives built from tagged source repositories."}
 

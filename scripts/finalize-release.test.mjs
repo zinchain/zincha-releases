@@ -62,6 +62,7 @@ test("CLI prerelease requires five archives and omits node install claims", (t) 
   assert.equal(manifest.required_assets.length, 5); assert.equal(manifest.artifacts.length, 5);
   assert.equal(fs.readFileSync(path.join(f.output, "SHA256SUMS"), "utf8").trim().split("\n").length, 10);
   const notes = fs.readFileSync(path.join(f.output, "RELEASE_NOTES.md"), "utf8");
+  assert.match(notes, /^# Zincha CLI v0.1.2/);
   assert.match(notes, /Vega testnet prerelease/); assert.doesNotMatch(notes, /## Install Node/);
 });
 
