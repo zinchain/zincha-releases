@@ -68,6 +68,29 @@ tar -xzf "zincha-node-$tag-linux-x86_64.tar.gz"
 ./zincha-node-$tag-linux-x86_64/zincha-node --version
 ```
 
+## Platform requirements
+
+The `v0.1.0` archives are the Vega testnet prerelease. Linux GNU binaries are
+built and smoke-tested on Ubuntu 24.04; the CLI macOS builds use macOS 15, and the
+Windows CLI build uses Windows Server 2022. These are the build/test environments,
+not a claim that every other operating-system version has been qualified.
+
+The Linux archives require glibc 2.39 or newer. The node also requires
+`libstdc++.so.6` providing `GLIBCXX_3.4.30` and `CXXABI_1.3.11`, plus the normal
+GCC runtime. These requirements are checked from the compiled ELF files.
+
+The Windows x64 CLI imports `VCRUNTIME140.dll` and the Universal C Runtime.
+Install the current [Microsoft Visual C++ v14 x64 Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
+if that runtime is not already installed.
+
+The frozen node source reports `zincha-node 0.1.0-genesis` from `--version`; this
+is its existing internal label. The binary release tag is `v0.1.0`. Use the
+archive's `VERSION` file and `release-manifest.json` to identify the exact source
+commit. The public CLI reports `zincha 0.1.0`.
+
+See the [v0.1.0 build verification record](validation/v0.1.0.json) for source
+commits, successful build jobs, checksums, and the scope of validation.
+
 ## Verify
 
 Download the aggregate checksums next to the archive and verify before running

@@ -1,0 +1,373 @@
+{
+  "schema_version": 1,
+  "release_tag": "v0.1.0",
+  "channel": "Vega testnet prerelease",
+  "verification_stage": "All required artifacts verified before final publication",
+  "verified_at_utc": "2026-10-21T07:47:47.408907+00:00",
+  "scope": "Source/build integrity, default Linux all-targets tests, native CLI/node smoke checks, archive contents, architecture and checksums. Separate network deployment, endurance and performance qualification are not asserted by this record.",
+  "sources": {
+    "zincha-node": {
+      "repository": "zinchain/zincha",
+      "tag": "v0.1.0",
+      "commit": "1008ba8447a4ae22ddfa98f45dc2ab117d1bfe50",
+      "version_command_output": "zincha-node 0.1.0-genesis"
+    },
+    "zincha": {
+      "repository": "zinchain/zincha-sdk",
+      "tag": "v0.1.0",
+      "commit": "77126c2a947ea3fa19cf4e28127da747ad8b3ab0",
+      "version_command_output": "zincha 0.1.0"
+    }
+  },
+  "compiler": "Rust 1.94.0",
+  "execution": "Release suites used sequential test execution; platform build matrices used max-parallel: 1.",
+  "node_gate": {
+    "workflow_run_url": "https://github.com/zinchain/zincha/actions/runs/39552742520",
+    "job_url": "https://github.com/zinchain/zincha/actions/runs/39552742520/job/119065456211",
+    "source_manifest": "passed",
+    "formatting": "passed",
+    "command": "cargo test --all-targets --locked",
+    "rust_test_threads": 1,
+    "results": {
+      "passed": 4977,
+      "failed": 0,
+      "ignored": 8,
+      "measured": 0,
+      "filtered_out": 0
+    },
+    "ignored_test_scope": "The eight source-defined ignored tests are outside this default release gate. Prior broader validation and remaining qualification are recorded in the pinned source RELEASE.md.",
+    "test_build_overrides": {
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0",
+      "CARGO_INCREMENTAL": "0"
+    },
+    "test_build_overrides_scope": "Test job only; assertions and all test targets retained. Production build profiles unchanged.",
+    "log_sha256": "3bd3a3b7e0fab4e6f00f4fcfebae2168f1b2a97be7b99957a6aa4ed6242552ac"
+  },
+  "sdk_validation": {
+    "source_ci_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39540785893",
+    "tooling_fix_ci_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39545790659",
+    "release_recovery_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39546059878",
+    "rust_tests_passed": 197,
+    "python_tests_passed_per_version": 60,
+    "typescript_tests_passed": 75,
+    "python_compatibility_versions": [
+      "3.9",
+      "3.10",
+      "3.11",
+      "3.12"
+    ]
+  },
+  "build_and_smoke_environments": {
+    "linux": "Ubuntu 24.04",
+    "macos": "macOS 15",
+    "windows": "Windows Server 2022"
+  },
+  "artifacts": [
+    {
+      "archive": "zincha-v0.1.0-linux-x86_64.tar.gz",
+      "archive_sha256": "369bcc824b14a638506189355ec1602d80298293ab046a03e2593647e89d93d7",
+      "binary_sha256": "1d53bb6a6df05613795385595f78cccab3606d07aefa3bd6fc00dc183838345e",
+      "binary_bytes": 15620664,
+      "source_commit": "77126c2a947ea3fa19cf4e28127da747ad8b3ab0",
+      "workflow_run_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39541521397",
+      "architecture": "x86_64-unknown-linux-gnu",
+      "build_job_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39541521397/job/119032185124",
+      "build_log_sha256": "2a088bae91a2a39898ff7cd162e18a9e8576e87e53ce68bcb14580c7a855aa1a",
+      "build_and_native_smoke_checks": "passed"
+    },
+    {
+      "archive": "zincha-v0.1.0-linux-aarch64.tar.gz",
+      "archive_sha256": "84a8d069276c6c7c6bafc78744a45e3170fb376083c04e63a9f9a2c1cd921baa",
+      "binary_sha256": "23ab16c83897a1ea5368afecbc615501e83427422606da812168d7417b7e3458",
+      "binary_bytes": 13818096,
+      "source_commit": "77126c2a947ea3fa19cf4e28127da747ad8b3ab0",
+      "workflow_run_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39541521397",
+      "architecture": "aarch64-unknown-linux-gnu",
+      "build_job_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39541521397/job/119032185101",
+      "build_log_sha256": "9f292659b22f461b52f896d74195584933554c3060cbc16e95b84bcaf876f061",
+      "build_and_native_smoke_checks": "passed"
+    },
+    {
+      "archive": "zincha-v0.1.0-macos-x86_64.tar.gz",
+      "archive_sha256": "df5bdd9f0f733655d9ea090847d76b4200e6b26ad6fe1788b15dd5fa6f53d8a7",
+      "binary_sha256": "92362cd91e48bc66649bd9458700a927f0d1dda4e7b2a5c6519a6543a3fd9a67",
+      "binary_bytes": 14215824,
+      "source_commit": "77126c2a947ea3fa19cf4e28127da747ad8b3ab0",
+      "workflow_run_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39546059878",
+      "architecture": "x86_64-apple-darwin",
+      "build_job_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39546059878/job/119056309828",
+      "build_log_sha256": "54612142dff341128c5a16b0622e4d2d4a72058270a077cc3e6c8cf9dc13d07d",
+      "build_and_native_smoke_checks": "passed"
+    },
+    {
+      "archive": "zincha-v0.1.0-macos-aarch64.tar.gz",
+      "archive_sha256": "85fedb1953aad565d61167931c9f4e3c8b10fbf74a2fd459a4d0f8a65bcfb5bd",
+      "binary_sha256": "9d951460638736592a5290f29afdc673b80b7dbc00527f0018bce3ab1e5d7eb6",
+      "binary_bytes": 12376992,
+      "source_commit": "77126c2a947ea3fa19cf4e28127da747ad8b3ab0",
+      "workflow_run_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39546059878",
+      "architecture": "aarch64-apple-darwin",
+      "build_job_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39546059878/job/119046276766",
+      "build_log_sha256": "40566c7637d419cc00532cbdb144df07f406c412edd89842286d2c996e313b7a",
+      "build_and_native_smoke_checks": "passed"
+    },
+    {
+      "archive": "zincha-v0.1.0-windows-x86_64.zip",
+      "archive_sha256": "bb99424af8e16e9817788ac843e09b8875d4f4c4550aa875de3a9c4fd9abf9b4",
+      "binary_sha256": "5516b8d3122b9c285582459b691228c2c34ffafeb76945878f07ddfa0e63b21b",
+      "binary_bytes": 12584960,
+      "source_commit": "77126c2a947ea3fa19cf4e28127da747ad8b3ab0",
+      "workflow_run_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39546059878",
+      "architecture": "x86_64-pc-windows-msvc",
+      "build_job_url": "https://github.com/zinchain/zincha-sdk/actions/runs/39546059878/job/119046276950",
+      "build_log_sha256": "528e70e2b465d23597976089b69d85a8a278a71a56ab17e8e7852f0a10e560aa",
+      "build_and_native_smoke_checks": "passed"
+    },
+    {
+      "archive": "zincha-node-v0.1.0-linux-x86_64.tar.gz",
+      "archive_sha256": "53d26207ecefa13013c2cef1c848bd0e54e6db1c488b36dffd05ec4bbc463f62",
+      "binary_sha256": "0a4cd5df3b734587da4f10befc59d6596bf708dcca1fe69d513487727b76598b",
+      "binary_bytes": 58119176,
+      "source_commit": "1008ba8447a4ae22ddfa98f45dc2ab117d1bfe50",
+      "workflow_run_url": "https://github.com/zinchain/zincha/actions/runs/39552742520",
+      "architecture": "x86_64-unknown-linux-gnu",
+      "build_job_url": "https://github.com/zinchain/zincha/actions/runs/39552742520/job/119076448426",
+      "build_log_sha256": "b5680581bf53322c48e8642ed0381a3afe25b0d73304455fb6ba3ba4089689be",
+      "build_and_native_smoke_checks": "passed"
+    },
+    {
+      "archive": "zincha-node-v0.1.0-linux-aarch64.tar.gz",
+      "archive_sha256": "3147e292c4c6178597469bc745fc9dfb82e2c8c44f7ee5ef9dfa895f36dc3374",
+      "binary_sha256": "a0c9fa1b719343f0b2ebafe80ccf1232300524c56e150b0d527dc1d3c4a7b42f",
+      "binary_bytes": 48162528,
+      "source_commit": "1008ba8447a4ae22ddfa98f45dc2ab117d1bfe50",
+      "workflow_run_url": "https://github.com/zinchain/zincha/actions/runs/39552742520",
+      "architecture": "aarch64-unknown-linux-gnu",
+      "build_job_url": "https://github.com/zinchain/zincha/actions/runs/39552742520/job/119076448522",
+      "build_log_sha256": "4a79697ac024fcb083ad7e9cfe4cf8f2ccb1fd043e369521318b02e130f345a6",
+      "build_and_native_smoke_checks": "passed"
+    }
+  ],
+  "linux_runtime_symbol_requirements": [
+    {
+      "archive": "zincha-node-v0.1.0-linux-aarch64.tar.gz",
+      "required_symbol_versions": {
+        "ld-linux-aarch64.so.1": [
+          "GLIBC_2.17"
+        ],
+        "libm.so.6": [
+          "GLIBC_2.29",
+          "GLIBC_2.17"
+        ],
+        "libc.so.6": [
+          "GLIBC_2.28",
+          "GLIBC_2.27",
+          "GLIBC_2.30",
+          "GLIBC_2.32",
+          "GLIBC_2.18",
+          "GLIBC_2.38",
+          "GLIBC_2.25",
+          "GLIBC_2.33",
+          "GLIBC_2.29",
+          "GLIBC_2.34",
+          "GLIBC_2.17",
+          "GLIBC_2.39"
+        ],
+        "libstdc++.so.6": [
+          "CXXABI_1.3.7",
+          "GLIBCXX_3.4.20",
+          "CXXABI_1.3.8",
+          "GLIBCXX_3.4.17",
+          "CXXABI_1.3.9",
+          "GLIBCXX_3.4.18",
+          "GLIBCXX_3.4.26",
+          "GLIBCXX_3.4.9",
+          "GLIBCXX_3.4.29",
+          "GLIBCXX_3.4.11",
+          "CXXABI_1.3",
+          "GLIBCXX_3.4.14",
+          "GLIBCXX_3.4.30",
+          "CXXABI_1.3.11",
+          "CXXABI_1.3.5",
+          "GLIBCXX_3.4.22",
+          "GLIBCXX_3.4.21",
+          "GLIBCXX_3.4.15",
+          "GLIBCXX_3.4.19",
+          "GLIBCXX_3.4"
+        ],
+        "libgcc_s.so.1": [
+          "GCC_3.0",
+          "GLIBC_2.0",
+          "GCC_4.2.0",
+          "GCC_3.3"
+        ]
+      },
+      "minimum_glibc_symbol_version": "2.39"
+    },
+    {
+      "archive": "zincha-node-v0.1.0-linux-x86_64.tar.gz",
+      "required_symbol_versions": {
+        "libstdc++.so.6": [
+          "GLIBCXX_3.4",
+          "GLIBCXX_3.4.9",
+          "GLIBCXX_3.4.11",
+          "GLIBCXX_3.4.14",
+          "GLIBCXX_3.4.15",
+          "GLIBCXX_3.4.17",
+          "GLIBCXX_3.4.18",
+          "GLIBCXX_3.4.19",
+          "GLIBCXX_3.4.20",
+          "GLIBCXX_3.4.21",
+          "GLIBCXX_3.4.22",
+          "GLIBCXX_3.4.26",
+          "GLIBCXX_3.4.29",
+          "GLIBCXX_3.4.30",
+          "CXXABI_1.3",
+          "CXXABI_1.3.5",
+          "CXXABI_1.3.7",
+          "CXXABI_1.3.8",
+          "CXXABI_1.3.9",
+          "CXXABI_1.3.11"
+        ],
+        "libgcc_s.so.1": [
+          "GCC_3.0",
+          "GCC_3.3",
+          "GCC_4.2.0"
+        ],
+        "libm.so.6": [
+          "GLIBC_2.2.5",
+          "GLIBC_2.29"
+        ],
+        "libc.so.6": [
+          "GLIBC_2.2.5",
+          "GLIBC_2.3",
+          "GLIBC_2.3.2",
+          "GLIBC_2.3.4",
+          "GLIBC_2.4",
+          "GLIBC_2.5",
+          "GLIBC_2.7",
+          "GLIBC_2.9",
+          "GLIBC_2.10",
+          "GLIBC_2.14",
+          "GLIBC_2.15",
+          "GLIBC_2.16",
+          "GLIBC_2.17",
+          "GLIBC_2.18",
+          "GLIBC_2.25",
+          "GLIBC_2.27",
+          "GLIBC_2.28",
+          "GLIBC_2.29",
+          "GLIBC_2.30",
+          "GLIBC_2.32",
+          "GLIBC_2.33",
+          "GLIBC_2.34",
+          "GLIBC_2.38",
+          "GLIBC_2.39"
+        ],
+        "ld-linux-x86-64.so.2": [
+          "GLIBC_2.3"
+        ]
+      },
+      "minimum_glibc_symbol_version": "2.39"
+    },
+    {
+      "archive": "zincha-v0.1.0-linux-aarch64.tar.gz",
+      "required_symbol_versions": {
+        "libm.so.6": [
+          "GLIBC_2.29"
+        ],
+        "ld-linux-aarch64.so.1": [
+          "GLIBC_2.17"
+        ],
+        "libc.so.6": [
+          "GLIBC_2.28",
+          "GLIBC_2.30",
+          "GLIBC_2.33",
+          "GLIBC_2.32",
+          "GLIBC_2.18",
+          "GLIBC_2.38",
+          "GLIBC_2.25",
+          "GLIBC_2.29",
+          "GLIBC_2.34",
+          "GLIBC_2.17",
+          "GLIBC_2.39"
+        ],
+        "libgcc_s.so.1": [
+          "GCC_3.0",
+          "GCC_4.2.0",
+          "GCC_3.3"
+        ]
+      },
+      "minimum_glibc_symbol_version": "2.39"
+    },
+    {
+      "archive": "zincha-v0.1.0-linux-x86_64.tar.gz",
+      "required_symbol_versions": {
+        "libgcc_s.so.1": [
+          "GCC_3.0",
+          "GCC_3.3",
+          "GCC_4.2.0"
+        ],
+        "libm.so.6": [
+          "GLIBC_2.29"
+        ],
+        "libc.so.6": [
+          "GLIBC_2.2.5",
+          "GLIBC_2.3",
+          "GLIBC_2.3.2",
+          "GLIBC_2.3.4",
+          "GLIBC_2.4",
+          "GLIBC_2.7",
+          "GLIBC_2.9",
+          "GLIBC_2.14",
+          "GLIBC_2.15",
+          "GLIBC_2.16",
+          "GLIBC_2.17",
+          "GLIBC_2.18",
+          "GLIBC_2.25",
+          "GLIBC_2.28",
+          "GLIBC_2.29",
+          "GLIBC_2.30",
+          "GLIBC_2.32",
+          "GLIBC_2.33",
+          "GLIBC_2.34",
+          "GLIBC_2.38",
+          "GLIBC_2.39"
+        ],
+        "ld-linux-x86-64.so.2": [
+          "GLIBC_2.3"
+        ]
+      },
+      "minimum_glibc_symbol_version": "2.39"
+    }
+  ],
+  "windows_runtime_imports": {
+    "archive": "zincha-v0.1.0-windows-x86_64.zip",
+    "imported_dlls": [
+      "bcryptprimitives.dll",
+      "kernel32.dll",
+      "ws2_32.dll",
+      "api-ms-win-core-synch-l1-2-0.dll",
+      "ntdll.dll",
+      "bcrypt.dll",
+      "advapi32.dll",
+      "VCRUNTIME140.dll",
+      "api-ms-win-crt-math-l1-1-0.dll",
+      "api-ms-win-crt-runtime-l1-1-0.dll",
+      "api-ms-win-crt-convert-l1-1-0.dll",
+      "api-ms-win-crt-environment-l1-1-0.dll",
+      "api-ms-win-crt-stdio-l1-1-0.dll",
+      "api-ms-win-crt-string-l1-1-0.dll",
+      "api-ms-win-crt-heap-l1-1-0.dll",
+      "api-ms-win-crt-utility-l1-1-0.dll",
+      "api-ms-win-crt-locale-l1-1-0.dll"
+    ]
+  },
+  "recovery_notes": [
+    "Linux CLI artifacts came from successful jobs in run 39541521397; that run was later cancelled after a macOS shell uploader failure. Successful Linux assets were retained.",
+    "SDK workflow 44ab99b708441bbdf36579477adcfe36097ca531 fixed Bash 3.2 upload arguments and allowed missing-platform retries. SDK source tag was not moved.",
+    "The unpublished draft tag was explicitly restored after a title-only REST update changed it. Finalizer commit 6d905a9 explicitly preserves the tag when publishing. Existing assets were retained.",
+    "Node run 39550664385 failed before any tests executed: the runner reported only 73 MB free and the test linker crashed. Workflow 540dc0db6872249e75bf723aeddee33c5042e8f3 bounded test-build disk use; the complete retry passed with 8 GiB free. Node source tag was not moved."
+  ]
+}

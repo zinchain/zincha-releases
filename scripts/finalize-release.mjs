@@ -222,6 +222,8 @@ tar -xzf "zincha-node-$tag-linux-x86_64.tar.gz"
 \`\`\`
 
 See \`release-manifest.json\` for source repository, source tag, source commit, workflow run URL, target triple, build time, and checksum metadata for every binary archive.
+
+See [platform requirements](https://github.com/zinchain/zincha-releases/blob/${tag}/README.md#platform-requirements) for build/test environments, runtime dependencies, and version-label details.
 `;
 
 fs.mkdirSync(outDir, { recursive: true });
