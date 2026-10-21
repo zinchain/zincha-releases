@@ -52,10 +52,10 @@ surface.
 Pick the archive for your platform from the release page, unpack it, and place
 the binary on your `PATH`.
 
-Example for Linux x86_64:
+Example for the current CLI on Linux x86_64:
 
 ```bash
-tag=v0.1.0
+tag=v0.1.2
 base=https://github.com/zinchain/zincha-releases/releases/download/$tag
 curl -fsSLO "$base/zincha-$tag-linux-x86_64.tar.gz"
 tar -xzf "zincha-$tag-linux-x86_64.tar.gz"
@@ -74,8 +74,8 @@ tar -xzf "zincha-node-$tag-linux-x86_64.tar.gz"
 
 ## Platform requirements
 
-The `v0.1.0` archives are the Vega testnet prerelease. Linux GNU binaries are
-built and smoke-tested on Ubuntu 24.04; the CLI macOS builds use macOS 15, and the
+The CLI `v0.1.2` and unchanged node `v0.1.0` archives are Vega testnet
+prereleases. Linux GNU binaries are built and smoke-tested on Ubuntu 24.04; the CLI macOS builds use macOS 15, and the
 Windows CLI build uses Windows Server 2022. These are the build/test environments,
 not a claim that every other operating-system version has been qualified.
 
@@ -90,7 +90,7 @@ if that runtime is not already installed.
 The frozen node source reports `zincha-node 0.1.0-genesis` from `--version`; this
 is its existing internal label. The binary release tag is `v0.1.0`. Use the
 archive's `VERSION` file and `release-manifest.json` to identify the exact source
-commit. The public CLI reports `zincha 0.1.0`.
+commit. The current public CLI reports `zincha 0.1.2`.
 
 See the [v0.1.0 build verification record](validation/v0.1.0.json) for source
 commits, successful build jobs, checksums, and the scope of validation.
@@ -101,7 +101,7 @@ Download the aggregate checksums next to the archive and verify before running
 the binary:
 
 ```bash
-tag=v0.1.0
+tag=v0.1.2
 base=https://github.com/zinchain/zincha-releases/releases/download/$tag
 curl -fsSLO "$base/SHA256SUMS"
 curl -fsSLO "$base/zincha-$tag-linux-x86_64.tar.gz"
@@ -156,7 +156,7 @@ move a source tag to repair release tooling or publish an incomplete asset set.
    If a job fails, investigate before using **Re-run failed jobs**; never count
    a failed or missing platform observation as a pass.
 
-Local finalizer checks (Node 22+), one test at a time:
+Local release-tool checks (Node 22+ and Python 3.12), one test at a time:
 
 ```bash
 node --test --test-concurrency=1 scripts/finalize-release.test.mjs
