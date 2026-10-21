@@ -14,15 +14,17 @@ A combined chain release, for example `v0.1.0`, contains both binary families:
 - `zincha`: public developer CLI, built from `zinchain/zincha-sdk`.
 - `zincha-node`: node runtime, built from the hardened `zinchain/zincha` source.
 
-A CLI-only patch release, such as `v0.1.2`, contains all five CLI platforms and
+A CLI-only patch release contains all five CLI platforms and
 does not replace or relabel the node release. The finalizer requires an explicit
 `release_kind=cli` selection; `combined` remains the default and still requires
 both Linux node archives. CLI-only releases reject accidental node archives.
 
-The current Vega download pairing is **CLI 0.1.2 + node 0.1.0**.
-The [CLI prerelease](https://github.com/zinchain/zincha-releases/releases/tag/v0.1.2)
-links directly to the unchanged [node release](https://github.com/zinchain/zincha-releases/releases/tag/v0.1.0).
-Use each version’s own checksums and manifest.
+The current [Vega v0.1.2 bundle](https://github.com/zinchain/zincha-releases/releases/tag/v0.1.2)
+contains **CLI 0.1.2 + unchanged node 0.1.0** directly on the same release page.
+The node archives and their build manifests retain their original v0.1.0 names,
+source commits and bytes. The bundle's `SHA256SUMS` and `release-manifest.json`
+cover all seven archives; `component_tags` records each component's version.
+The original v0.1.0 release remains available and unchanged.
 
 The source repositories upload platform archives and per-build manifest
 fragments. The finalizer workflow in this repository validates the required
@@ -43,7 +45,7 @@ Every finalized release must include these `zincha` CLI archives:
 - `zincha-vX.Y.Z-windows-x86_64.zip`
 
 Every finalized `combined` release must also include these `zincha-node`
-archives:
+archives (the node version may differ from the bundle version):
 
 - `zincha-node-vX.Y.Z-linux-x86_64.tar.gz`
 - `zincha-node-vX.Y.Z-linux-aarch64.tar.gz`
@@ -67,14 +69,15 @@ tar -xzf "zincha-$tag-linux-x86_64.tar.gz"
 ./zincha-$tag-linux-x86_64/zincha --version
 ```
 
-Example for the Linux node runtime:
+Example for the unchanged Linux node from the same bundle:
 
 ```bash
-tag=v0.1.0
-base=https://github.com/zinchain/zincha-releases/releases/download/$tag
-curl -fsSLO "$base/zincha-node-$tag-linux-x86_64.tar.gz"
-tar -xzf "zincha-node-$tag-linux-x86_64.tar.gz"
-./zincha-node-$tag-linux-x86_64/zincha-node --version
+release_tag=v0.1.2
+node_tag=v0.1.0
+base=https://github.com/zinchain/zincha-releases/releases/download/$release_tag
+curl -fsSLO "$base/zincha-node-$node_tag-linux-x86_64.tar.gz"
+tar -xzf "zincha-node-$node_tag-linux-x86_64.tar.gz"
+./zincha-node-$node_tag-linux-x86_64/zincha-node --version
 ```
 
 ## Platform requirements
@@ -155,6 +158,24 @@ When updating an unpublished draft through the REST API, explicitly preserve its
 explicitly when publishing. If a platform upload fails, preserve successful
 assets and retry only missing platforms from the original source tag. Do not
 move a source tag to repair release tooling or publish an incomplete asset set.
+
+## Reuse unchanged node binaries in a newer bundle
+
+1. Copy the two original Linux node archives and their `.build.json` files to the
+   destination release without renaming, rebuilding or modifying their bytes.
+2. Dispatch **Finalize Release** with the destination `tag`,
+   `release_kind=combined`, and the explicit original `node_tag` (for v0.1.2,
+   `node_tag=v0.1.0`). Keep `prerelease=true` for Vega. Use
+   `force_republish=true` only when replacing the existing aggregate checksums
+   and manifest, as required when expanding an already finalized CLI-only release.
+3. The workflow downloads the original node files independently and compares
+   every byte before finalizing. The original build/source tags stay unchanged;
+   the aggregate manifest records both versions. Blank `node_tag` preserves the
+   normal same-version combined-release behavior.
+4. Download the new aggregate metadata and copied files, verify their hashes,
+   and retain a record of the original and destination asset identities. Existing
+   CLI archives must remain unchanged. The CLI download verifier supports either
+   a CLI-only release or a bundle containing the two node archives.
 
 ## Maintainer flow — CLI-only patch
 

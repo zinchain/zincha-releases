@@ -5,6 +5,7 @@ import path from "node:path";
 
 const tag = process.env.TAG_NAME || process.argv[2];
 const releaseKind = process.env.RELEASE_KIND || "combined";
+const nodeTag = process.env.NODE_TAG || tag;
 const prerelease = process.env.PRERELEASE === "true";
 if (!["combined", "cli"].includes(releaseKind)) {
   throw new Error("RELEASE_KIND must be combined or cli");
@@ -19,6 +20,15 @@ const outDir = path.resolve(
 if (!tag || !/^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$/.test(tag)) {
   throw new Error("TAG_NAME or argv[2] must be a release tag such as v0.1.0");
 }
+if (!/^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$/.test(nodeTag)) {
+  throw new Error("NODE_TAG must be a release tag such as v0.1.0");
+}
+if (releaseKind === "cli" && process.env.NODE_TAG) {
+  throw new Error("NODE_TAG is only supported for combined releases");
+}
+const componentTags = releaseKind === "cli"
+  ? { zincha: tag }
+  : { zincha: tag, "zincha-node": nodeTag };
 
 if (!fs.existsSync(releaseDir)) {
   throw new Error(`release asset directory does not exist: ${releaseDir}`);
@@ -38,8 +48,8 @@ const required = [
   platform,
   targetTriple,
   format,
-  archive: `${binary}-${tag}-${platform}.${format}`,
-  build: `${binary}-${tag}-${platform}.build.json`,
+  archive: `${binary}-${componentTags[binary]}-${platform}.${format}`,
+  build: `${binary}-${componentTags[binary]}-${platform}.build.json`,
 }));
 
 function sha256(filePath) {
@@ -71,10 +81,11 @@ if (missing.length > 0) {
   throw new Error(`release ${tag} is missing required assets:\n${missing.join("\n")}`);
 }
 
-const archivePattern = new RegExp(
-  `^(zincha|zincha-node)-${tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}-(.+)\\.(tar\\.gz|zip)$`,
-);
-const archiveNames = [...files].filter((name) => archivePattern.test(name)).sort();
+const escapedTags = [...new Set([tag, nodeTag])]
+  .sort((a, b) => b.length - a.length)
+  .map((value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+const archivePattern = new RegExp(`^(zincha|zincha-node)-(${escapedTags.join("|")})-(.+)\\.(tar\\.gz|zip)$`);
+const archiveNames = [...files].filter((name) => /^zincha(?:-node)?-.*\.(tar\.gz|zip)$/.test(name)).sort();
 if (releaseKind === "cli" && archiveNames.some((name) => name.startsWith("zincha-node-"))) {
   throw new Error("CLI-only releases must not contain node archives");
 }
@@ -84,6 +95,10 @@ if (releaseKind === "cli" && archiveNames.length !== required.length) {
 const fragmentNames = [...files].filter((name) => name.endsWith(".build.json")).sort();
 
 for (const archive of archiveNames) {
+  const identity = archive.match(archivePattern);
+  if (!identity || identity[2] !== componentTags[identity[1]]) {
+    throw new Error(`${archive} does not match the declared component tag`);
+  }
   const build = archive.replace(/\.(tar\.gz|zip)$/, ".build.json");
   if (!files.has(build)) {
     throw new Error(`${archive} does not have matching build manifest ${build}`);
@@ -117,8 +132,9 @@ const artifacts = archiveNames.map((archive) => {
   if (build.artifact !== archive) {
     throw new Error(`${buildName} artifact mismatch: expected ${archive}, got ${build.artifact}`);
   }
-  if (build.release_tag !== tag) {
-    throw new Error(`${buildName} release_tag mismatch: expected ${tag}, got ${build.release_tag}`);
+  const [, archiveBinary, archiveTag, archivePlatform, archiveFormat] = archive.match(archivePattern);
+  if (build.release_tag !== archiveTag) {
+    throw new Error(`${buildName} release_tag mismatch: expected ${archiveTag}, got ${build.release_tag}`);
   }
   if (build.archive_sha256 !== checksum) {
     throw new Error(`${buildName} archive_sha256 does not match uploaded archive`);
@@ -135,7 +151,6 @@ const artifacts = archiveNames.map((archive) => {
   const targetTriple = requireString(build, "target_triple", buildName);
   const platform = requireString(build, "platform", buildName);
   const builtAt = requireString(build, "built_at", buildName);
-  const [, archiveBinary, archivePlatform, archiveFormat] = archive.match(archivePattern);
   if (binary !== archiveBinary || platform !== archivePlatform || build.archive_format !== archiveFormat) {
     throw new Error(`${buildName} binary/platform/format does not match archive name`);
   }
@@ -149,8 +164,8 @@ const artifacts = archiveNames.map((archive) => {
   if (binary === "zincha-node" && sourceRepo !== "zinchain/zincha") {
     throw new Error(`${buildName} source_repo must be zinchain/zincha`);
   }
-  if (sourceTag !== tag) {
-    throw new Error(`${buildName} source_tag mismatch: expected ${tag}, got ${sourceTag}`);
+  if (sourceTag !== archiveTag) {
+    throw new Error(`${buildName} source_tag mismatch: expected ${archiveTag}, got ${sourceTag}`);
   }
   if (!/^[0-9a-f]{40}$/i.test(sourceCommit)) {
     throw new Error(`${buildName} source_commit must look like a git commit SHA`);
@@ -167,6 +182,7 @@ const artifacts = archiveNames.map((archive) => {
 
   return {
     name: archive,
+    release_tag: archiveTag,
     binary,
     platform,
     target_triple: targetTriple,
@@ -199,6 +215,7 @@ const manifest = {
   schema_version: 1,
   release_tag: tag,
   release_kind: releaseKind,
+  component_tags: componentTags,
   prerelease,
   generated_at: generatedAt,
   required_assets: required.map((item) => item.archive),
@@ -214,7 +231,7 @@ const assetLines = artifacts
 
 const notes = `# ${releaseKind === "cli" ? "Zincha CLI" : "Zincha"} ${tag}
 
-${prerelease ? "Vega testnet prerelease. " : ""}${releaseKind === "cli" ? "This release updates only the public developer CLI. It does not include or replace the node runtime; the existing node release remains unchanged." : "This release contains public CLI and node binary archives built from tagged source repositories."}
+${prerelease ? "Vega testnet prerelease. " : ""}${releaseKind === "cli" ? "This release updates only the public developer CLI. It does not include or replace the node runtime; the existing node release remains unchanged." : nodeTag !== tag ? `This bundle contains CLI ${tag} and the unchanged node ${nodeTag} archives. The node archives and their build manifests are copied byte-for-byte from ${nodeTag}; they have not been rebuilt, repackaged or relabeled. The aggregate checksums and manifest cover both component versions.` : "This release contains public CLI and node binary archives built from tagged source repositories."}
 
 ## Assets
 
@@ -241,9 +258,12 @@ tar -xzf "zincha-$tag-linux-x86_64.tar.gz"
 ${releaseKind === "combined" ? `## Install Node
 
 \`\`\`bash
-tag=${tag}
-tar -xzf "zincha-node-$tag-linux-x86_64.tar.gz"
-./zincha-node-$tag-linux-x86_64/zincha-node --version
+release_tag=${tag}
+node_tag=${nodeTag}
+base=https://github.com/zinchain/zincha-releases/releases/download/$release_tag
+curl -fsSLO "$base/zincha-node-$node_tag-linux-x86_64.tar.gz"
+tar -xzf "zincha-node-$node_tag-linux-x86_64.tar.gz"
+./zincha-node-$node_tag-linux-x86_64/zincha-node --version
 \`\`\`
 
 ` : ""}

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Finalized CLI-only Vega prerelease tag"
+        description: "Finalized Vega prerelease tag containing all five CLI platforms"
         required: true
         type: string
       sdk_source_commit:

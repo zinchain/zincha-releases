@@ -16,7 +16,7 @@ const platforms = [
   ["windows-x86_64", "x86_64-pc-windows-msvc", "zip"],
 ];
 
-function fixture(t, combined = false) {
+function fixture(t, combined = false, nodeTag = "v0.1.2") {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "zincha-finalizer-test-"));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const assets = path.join(root, "assets");
@@ -25,14 +25,15 @@ function fixture(t, combined = false) {
   const builds = [];
   for (const binary of combined ? ["zincha", "zincha-node"] : ["zincha"]) {
     for (const [platform, target, format] of platforms.filter(([p]) => binary === "zincha" || p.startsWith("linux-"))) {
-      const base = `${binary}-v0.1.2-${platform}`;
+      const componentTag = binary === "zincha-node" ? nodeTag : "v0.1.2";
+      const base = `${binary}-${componentTag}-${platform}`;
       const artifact = `${base}.${format}`;
       const data = Buffer.from(`fixture bytes: ${artifact}`);
       fs.writeFileSync(path.join(assets, artifact), data);
       const build = {
-        schema_version: 1, artifact, binary, release_tag: "v0.1.2",
+        schema_version: 1, artifact, binary, release_tag: componentTag,
         source_repo: binary === "zincha" ? "zinchain/zincha-sdk" : "zinchain/zincha",
-        source_tag: "v0.1.2", source_commit: (binary === "zincha" ? "a" : "b").repeat(40),
+        source_tag: componentTag, source_commit: (binary === "zincha" ? "a" : "b").repeat(40),
         workflow_run_url: "https://github.com/zinchain/zincha-sdk/actions/runs/123",
         target_triple: target, platform, built_at: "2026-10-21T00:00:00Z",
         archive_format: format, archive_size_bytes: data.length,
@@ -45,10 +46,12 @@ function fixture(t, combined = false) {
   }
   return {
     assets, output, builds,
-    run(kind) {
+    run(kind, selectedNodeTag) {
       const env = { ...process.env, TAG_NAME: "v0.1.2", RELEASE_DIR: assets, OUT_DIR: output, PRERELEASE: "true" };
       delete env.RELEASE_KIND;
+      delete env.NODE_TAG;
       if (kind !== undefined) env.RELEASE_KIND = kind;
+      if (selectedNodeTag !== undefined) env.NODE_TAG = selectedNodeTag;
       return spawnSync(process.execPath, [script], { env, encoding: "utf8" });
     },
   };
@@ -70,6 +73,43 @@ test("combined remains the default and requires both node platforms", (t) => {
   const f = fixture(t, true); const r = f.run(); assert.equal(r.status, 0, r.stderr);
   assert.equal(JSON.parse(fs.readFileSync(path.join(f.output, "release-manifest.json"))).artifacts.length, 7);
   assert.match(fs.readFileSync(path.join(f.output, "RELEASE_NOTES.md"), "utf8"), /## Install Node/);
+});
+
+test("combined bundle preserves the older node archives and manifests byte-for-byte", (t) => {
+  const f = fixture(t, true, "v0.1.0");
+  const before = new Map(fs.readdirSync(f.assets).map((name) => [name, fs.readFileSync(path.join(f.assets, name))]));
+  const r = f.run("combined", "v0.1.0"); assert.equal(r.status, 0, r.stderr);
+  const manifest = JSON.parse(fs.readFileSync(path.join(f.output, "release-manifest.json")));
+  assert.deepEqual(manifest.component_tags, { zincha: "v0.1.2", "zincha-node": "v0.1.0" });
+  assert.equal(manifest.artifacts.length, 7);
+  assert.ok(manifest.artifacts.filter((a) => a.binary === "zincha-node").every((a) => a.release_tag === "v0.1.0" && a.source_tag === "v0.1.0"));
+  assert.equal(fs.readFileSync(path.join(f.output, "SHA256SUMS"), "utf8").trim().split("\n").length, 14);
+  const notes = fs.readFileSync(path.join(f.output, "RELEASE_NOTES.md"), "utf8");
+  assert.match(notes, /unchanged node v0.1.0/); assert.match(notes, /node_tag=v0.1.0/);
+  for (const [name, bytes] of before) assert.deepEqual(fs.readFileSync(path.join(f.assets, name)), bytes);
+});
+
+test("older nodes require an explicit declared version", (t) => {
+  const f = fixture(t, true, "v0.1.0"); assert.match(f.run("combined").stderr, /missing required assets/);
+});
+
+test("reused node provenance cannot be relabeled as the bundle version", (t) => {
+  const f = fixture(t, true, "v0.1.0"); const { file, build } = f.builds.find(({ build }) => build.binary === "zincha-node");
+  build.release_tag = "v0.1.2"; fs.writeFileSync(file, JSON.stringify(build));
+  assert.match(f.run("combined", "v0.1.0").stderr, /release_tag mismatch/);
+});
+
+test("CLI mode rejects a node version declaration", (t) => {
+  assert.match(fixture(t).run("cli", "v0.1.0").stderr, /only supported for combined/);
+});
+
+test("invalid node version fails closed", (t) => {
+  assert.match(fixture(t, true).run("combined", "../v0.1.0").stderr, /NODE_TAG must be/);
+});
+
+test("undeclared extra node versions are rejected", (t) => {
+  const f = fixture(t, true, "v0.1.0"); fs.writeFileSync(path.join(f.assets, "zincha-node-v0.0.9-linux-x86_64.tar.gz"), "extra");
+  assert.match(f.run("combined", "v0.1.0").stderr, /declared component tag/);
 });
 
 test("CLI assets cannot silently satisfy a combined release", (t) => {

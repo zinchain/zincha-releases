@@ -73,6 +73,42 @@ class DownloadChecks(unittest.TestCase):
         return subprocess.run([sys.executable, str(SCRIPT), "--tag", TAG, "--platform", platform,
                                "--source-commit", source, "--directory", str(root)], capture_output=True, text=True)
 
+    def add_node_manifest(self, root, node_tag="v0.1.0"):
+        path = root / "release-manifest.json"
+        manifest = json.loads(path.read_text())
+        manifest["release_kind"] = "combined"
+        manifest["component_tags"] = {"zincha": TAG, "zincha-node": node_tag}
+        for platform in ("linux-x86_64", "linux-aarch64"):
+            name = f"zincha-node-{node_tag}-{platform}.tar.gz"
+            manifest["required_assets"].append(name)
+            manifest["artifacts"].append({"name": name, "binary": "zincha-node", "platform": platform,
+                "target_triple": PLATFORMS[platform][0], "source_repo": "zinchain/zincha",
+                "source_tag": node_tag, "source_commit": "b" * 40, "archive_format": "tar.gz"})
+        path.write_text(json.dumps(manifest))
+
+    def test_cli_download_from_bundle_with_unchanged_node_version(self):
+        root, _ = self.fixture(); self.add_node_manifest(root)
+        result = self.run_check(root); self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_combined_bundle_still_requires_all_cli_platforms(self):
+        root, _ = self.fixture(); self.add_node_manifest(root)
+        path = root / "release-manifest.json"; manifest = json.loads(path.read_text())
+        manifest["artifacts"].pop(1); path.write_text(json.dumps(manifest))
+        result = self.run_check(root); self.assertNotEqual(result.returncode, 0)
+        self.assertIn("component asset set", result.stderr)
+
+    def test_combined_bundle_rejects_node_version_mismatch(self):
+        root, _ = self.fixture(); self.add_node_manifest(root)
+        path = root / "release-manifest.json"; manifest = json.loads(path.read_text())
+        manifest["component_tags"]["zincha-node"] = "v0.1.2"; path.write_text(json.dumps(manifest))
+        self.assertIn("node component identity mismatch", self.run_check(root).stderr)
+
+    def test_combined_bundle_rejects_missing_node_platform(self):
+        root, _ = self.fixture(); self.add_node_manifest(root)
+        path = root / "release-manifest.json"; manifest = json.loads(path.read_text())
+        manifest["artifacts"].pop(); path.write_text(json.dumps(manifest))
+        self.assertIn("invalid node platform matrix", self.run_check(root).stderr)
+
     def test_all_platform_headers_and_formats(self):
         for platform in PLATFORMS:
             with self.subTest(platform=platform):

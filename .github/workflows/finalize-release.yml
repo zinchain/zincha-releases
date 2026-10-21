@@ -23,6 +23,11 @@ on:
         default: combined
         type: choice
         options: [combined, cli]
+      node_tag:
+        description: "Combined releases only: original node tag to include unchanged; blank uses the bundle tag"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: write
@@ -57,12 +62,31 @@ jobs:
           mkdir -p dist/release-assets
           gh release download "$TAG_NAME" -R zinchain/zincha-releases --dir dist/release-assets --pattern '*' --clobber
 
+      - name: Verify reused node files against their original published release
+        if: inputs.release_kind == 'combined' && inputs.node_tag != '' && inputs.node_tag != inputs.tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NODE_TAG: ${{ inputs.node_tag }}
+        run: |
+          set -euo pipefail
+          [[ "$NODE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]
+          test "$(gh release view "$NODE_TAG" -R zinchain/zincha-releases --json isDraft --jq .isDraft)" = false
+          mkdir -p dist/original-node
+          for platform in linux-x86_64 linux-aarch64; do
+            for suffix in tar.gz build.json; do
+              file="zincha-node-$NODE_TAG-$platform.$suffix"
+              gh release download "$NODE_TAG" -R zinchain/zincha-releases --dir dist/original-node --pattern "$file"
+              cmp "dist/original-node/$file" "dist/release-assets/$file"
+            done
+          done
+
       - name: Validate and generate aggregate metadata
         env:
           TAG_NAME: ${{ inputs.tag }}
           RELEASE_DIR: dist/release-assets
           OUT_DIR: dist/finalized
           RELEASE_KIND: ${{ inputs.release_kind }}
+          NODE_TAG: ${{ inputs.node_tag }}
           PRERELEASE: ${{ inputs.prerelease }}
         run: node scripts/finalize-release.mjs
 

@@ -45,10 +45,25 @@ def main():
     require(release["tag_name"] == args.tag and release["prerelease"] and not release["draft"], "not the requested finalized prerelease")
     manifest = json.loads((root / "release-manifest.json").read_text())
     require(manifest["schema_version"] == 1 and manifest["release_tag"] == args.tag, "unsupported release manifest")
-    require(manifest["release_kind"] == "cli" and manifest["prerelease"], "expected a CLI-only prerelease")
+    kind = manifest["release_kind"]
+    require(kind in ("cli", "combined") and manifest["prerelease"], "expected a CLI or combined prerelease")
+    components = manifest.get("component_tags", {"zincha": args.tag, **({"zincha-node": args.tag} if kind == "combined" else {})})
+    require(set(components) == ({"zincha", "zincha-node"} if kind == "combined" else {"zincha"})
+            and components["zincha"] == args.tag, "invalid component version declaration")
     expected_names = {f"zincha-{args.tag}-{p}.{f}" for p, (_, f) in PLATFORMS.items()}
-    require(set(manifest["required_assets"]) == expected_names, "incomplete required CLI matrix")
-    require(len(manifest["artifacts"]) == 5 and {a["name"] for a in manifest["artifacts"]} == expected_names, "unexpected CLI asset set")
+    if kind == "combined":
+        node_tag = components["zincha-node"]
+        require(isinstance(node_tag, str) and re.fullmatch(r"v\d+\.\d+\.\d+", node_tag), "invalid node component version")
+        expected_names.update(f"zincha-node-{node_tag}-{p}.tar.gz" for p in ("linux-x86_64", "linux-aarch64"))
+        nodes = [a for a in manifest["artifacts"] if a["binary"] == "zincha-node"]
+        require(len(nodes) == 2 and {a["platform"] for a in nodes} == {"linux-x86_64", "linux-aarch64"}, "invalid node platform matrix")
+        for node in nodes:
+            require(node["name"] == f"zincha-node-{node_tag}-{node['platform']}.tar.gz"
+                    and node["source_tag"] == node_tag and node["source_repo"] == "zinchain/zincha"
+                    and node["target_triple"] == PLATFORMS[node["platform"]][0]
+                    and node["archive_format"] == "tar.gz", "node component identity mismatch")
+    require(set(manifest["required_assets"]) == expected_names, "incomplete required component matrix")
+    require(len(manifest["artifacts"]) == len(expected_names) and {a["name"] for a in manifest["artifacts"]} == expected_names, "unexpected component asset set")
     target, archive_format = PLATFORMS[args.platform]
     package = f"zincha-{args.tag}-{args.platform}"
     archive = root / f"{package}.{archive_format}"
