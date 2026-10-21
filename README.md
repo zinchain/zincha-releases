@@ -90,10 +90,18 @@ SHA256 checksum.
 1. Promote hardened code from `zincha-dev` into `zinchain/zincha`.
 2. Export and merge the public SDK surface into `zinchain/zincha-sdk`.
 3. Tag both source repositories with the same release tag.
-4. Let the source workflows upload `zincha-node` and `zincha` archives.
-5. Run `Finalize Release` in this repository for that tag.
+4. Manually dispatch the source workflows with that tag to upload `zincha-node`
+   and `zincha` archives, one platform at a time.
+5. Run `Finalize Release` in this repository for that tag; use
+   `prerelease=true` for Vega testnet builds.
 6. Publish only after the finalizer validates the required assets.
 
 The upload workflows require a `ZINCHA_RELEASES_TOKEN` secret in the source
 repositories. The token should be a least-privilege GitHub App token or
 fine-grained PAT with `contents: write` access to this repository.
+
+When updating an unpublished draft through the REST API, explicitly preserve its
+`tag_name` along with the changed metadata. The finalizer likewise passes the tag
+explicitly when publishing. If a platform upload fails, preserve successful
+assets and retry only missing platforms from the original source tag. Do not
+move a source tag to repair release tooling or publish an incomplete asset set.

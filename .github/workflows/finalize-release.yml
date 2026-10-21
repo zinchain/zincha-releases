@@ -71,7 +71,7 @@ jobs:
           PRERELEASE: ${{ inputs.prerelease }}
         run: |
           set -euo pipefail
-          args=(--draft=false --notes-file dist/finalized/RELEASE_NOTES.md)
+          args=(--tag "$TAG_NAME" --draft=false --notes-file dist/finalized/RELEASE_NOTES.md)
           if [ "$PRERELEASE" = "true" ]; then
             args+=(--prerelease=true)
           else
