@@ -25,6 +25,8 @@ The node archives and their build manifests retain their original v0.1.0 names,
 source commits and bytes. The bundle's `SHA256SUMS` and `release-manifest.json`
 cover all seven archives; `component_tags` records each component's version.
 The original v0.1.0 release remains available and unchanged.
+See the [node inclusion verification record](validation/v0.1.2-node-inclusion.json)
+for original/copy hashes, asset identities and aggregate validation.
 
 The source repositories upload platform archives and per-build manifest
 fragments. The finalizer workflow in this repository validates the required

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "release_tag": "v0.1.2",
+  "release_kind": "combined",
+  "component_tags": {
+    "zincha": "v0.1.2",
+    "zincha-node": "v0.1.0"
+  },
+  "status": "passed",
+  "verified_at": "2026-10-21T23:47:02.287913+00:00",
+  "release_url": "https://github.com/zinchain/zincha-releases/releases/tag/v0.1.2",
+  "prerelease": true,
+  "source_node_commit": "1008ba8447a4ae22ddfa98f45dc2ab117d1bfe50",
+  "finalizer_run": "https://github.com/zinchain/zincha-releases/actions/runs/39695359905",
+  "copy_proof": [
+    {
+      "name": "zincha-node-v0.1.0-linux-x86_64.tar.gz",
+      "size": 23128763,
+      "sha256": "53d26207ecefa13013c2cef1c848bd0e54e6db1c488b36dffd05ec4bbc463f62",
+      "original_asset_id": 661666452,
+      "copied_asset_id": 664116190
+    },
+    {
+      "name": "zincha-node-v0.1.0-linux-x86_64.build.json",
+      "size": 613,
+      "sha256": "91c29042330ac0abf65681326671337c70dc5e5f23b5fa3ec5ac3cede0b5ce9e",
+      "original_asset_id": 661666453,
+      "copied_asset_id": 664116415
+    },
+    {
+      "name": "zincha-node-v0.1.0-linux-aarch64.tar.gz",
+      "size": 21308707,
+      "sha256": "3147e292c4c6178597469bc745fc9dfb82e2c8c44f7ee5ef9dfa895f36dc3374",
+      "original_asset_id": 661748269,
+      "copied_asset_id": 664116513
+    },
+    {
+      "name": "zincha-node-v0.1.0-linux-aarch64.build.json",
+      "size": 616,
+      "sha256": "607366e39bf3d4a7f290150fd0704eafceb421fbb2cdce40ebf264c8cc7a278c",
+      "original_asset_id": 661748277,
+      "copied_asset_id": 664116748
+    }
+  ],
+  "checks": {
+    "release_tool_tests": {
+      "finalizer": 20,
+      "download_verifier": 11,
+      "status": "passed",
+      "execution": "sequential"
+    },
+    "workflow_lint": "passed",
+    "workflow_comparison_to_original_published_node_files": "byte-for-byte identical",
+    "post_upload_node_redownload": "byte-for-byte identical",
+    "node_embedded_version_and_source_identity": "unchanged v0.1.0 / 1008ba8447a4ae22ddfa98f45dc2ab117d1bfe50",
+    "cli_existing_assets": "all 10 archive/manifest asset IDs, sizes and digests unchanged",
+    "original_v0_1_0_release": "metadata and all original asset identities unchanged",
+    "aggregate_checksums": "all 14 archive/build-manifest digests passed",
+    "new_manifest_cli_download_checks": "all five platforms checked sequentially; passed"
+  },
+  "aggregate_sha256": {
+    "release-manifest.json": "625a65c2fb3f79f724e99f149e5bbcc01c143c37269ff1b801cb10d78ca55a10",
+    "SHA256SUMS": "6ddd2a323005466f9cafa179d9ab08faae00c21aa22775c853902b62e3b76c50"
+  },
+  "prior_cli_execution_validation": "v0.1.2.json",
+  "scope": "Distribution-only update. No binaries rebuilt, repackaged or relabeled. Prior native execution results remain applicable to the unchanged bytes; no new node runtime execution or deployment was performed.",
+  "evidence_directory": "/Users/ryomaito/Downloads/zincha-v0.1.2-node-inclusion-20261021"
+}

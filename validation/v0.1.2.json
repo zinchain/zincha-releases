@@ -445,5 +445,13 @@
     "Functional CLI validation, not throughput, endurance or node-release requalification.",
     "Native platform testing covers the recorded operating systems, not all older OS versions.",
     "Archive README is the source-tag README; current download and pairing instructions are in the release notes and repository README."
-  ]
+  ],
+  "subsequent_bundle_update": {
+    "record": "v0.1.2-node-inclusion.json",
+    "component_tags": {
+      "zincha": "v0.1.2",
+      "zincha-node": "v0.1.0"
+    },
+    "note": "The original CLI-only validation above is preserved. The release now also carries the unchanged node v0.1.0 archives, with regenerated aggregate metadata. CLI archive bytes are unchanged."
+  }
 }
