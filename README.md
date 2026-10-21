@@ -9,11 +9,15 @@ release archives, checksums, and manifests from GitHub Releases:
 
 ## Release Model
 
-Each chain release tag, for example `v0.1.0`, has one public GitHub Release that
-contains both binary families:
+A combined chain release, for example `v0.1.0`, contains both binary families:
 
 - `zincha`: public developer CLI, built from `zinchain/zincha-sdk`.
 - `zincha-node`: node runtime, built from the hardened `zinchain/zincha` source.
+
+A CLI-only patch release, such as `v0.1.2`, contains all five CLI platforms and
+does not replace or relabel the node release. The finalizer requires an explicit
+`release_kind=cli` selection; `combined` remains the default and still requires
+both Linux node archives. CLI-only releases reject accidental node archives.
 
 The source repositories upload platform archives and per-build manifest
 fragments. The finalizer workflow in this repository validates the required
@@ -33,7 +37,7 @@ Every finalized release must include these `zincha` CLI archives:
 - `zincha-vX.Y.Z-macos-aarch64.tar.gz`
 - `zincha-vX.Y.Z-windows-x86_64.zip`
 
-Every finalized first public runtime release must include these `zincha-node`
+Every finalized `combined` release must also include these `zincha-node`
 archives:
 
 - `zincha-node-vX.Y.Z-linux-x86_64.tar.gz`
@@ -108,7 +112,7 @@ Inspect `release-manifest.json` to trace each binary to its source repository,
 source tag, source commit, target triple, workflow run URL, build time, and
 SHA256 checksum.
 
-## Maintainer Flow
+## Maintainer Flow — combined release
 
 1. Promote hardened code from `zincha-dev` into `zinchain/zincha`.
 2. Export and merge the public SDK surface into `zinchain/zincha-sdk`.
@@ -128,3 +132,36 @@ When updating an unpublished draft through the REST API, explicitly preserve its
 explicitly when publishing. If a platform upload fails, preserve successful
 assets and retry only missing platforms from the original source tag. Do not
 move a source tag to repair release tooling or publish an incomplete asset set.
+
+## Maintainer flow — CLI-only patch
+
+1. Select the reviewed SDK commit and an unused version tag matching its Cargo
+   version. Run its sequential offline checks, then create the immutable tag
+   in `zinchain/zincha-sdk`. Do not move an existing tag.
+2. Dispatch SDK **Release Binaries** with that tag, `platforms=all` and
+   `force_republish=false`. Approve the existing release environment. Its
+   five platform build/smoke/upload jobs run one at a time.
+3. Wait for all five archives, build manifests and provenance attestations.
+   Run this repository's finalizer tests and review the downloaded assets.
+4. Dispatch **Finalize Release** with the tag, `release_kind=cli`,
+   `prerelease=true` for Vega, and `force_republish=false`. This publishes a
+   CLI-only manifest and notes; no new node tag or node build is required.
+5. Dispatch **Verify CLI Prerelease Downloads** with the tag and the full SDK
+   source commit. It downloads the published assets on native Linux x86/ARM,
+   macOS Intel/Apple Silicon and Windows x64 runners, sequentially. Each checks
+   hashes, manifests, contents and signed provenance before running the CLI,
+   public Vega reads and a bounded faucet-funded transfer/finality/balance audit.
+6. Preserve the per-platform verification artifacts outside Actions' 30-day
+   retention window. Record successes and any failures under `validation/`.
+   If a job fails, investigate before using **Re-run failed jobs**; never count
+   a failed or missing platform observation as a pass.
+
+Local finalizer checks (Node 22+), one test at a time:
+
+```bash
+node --test --test-concurrency=1 scripts/finalize-release.test.mjs
+python3 -m unittest discover -s scripts -p 'test_verify_cli_download.py'
+```
+
+Download verification does not rebuild the binary. It checks the exact published
+bytes. Functional transfers do not establish throughput or endurance qualification.

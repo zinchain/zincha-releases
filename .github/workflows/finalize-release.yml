@@ -17,6 +17,12 @@ on:
         required: false
         default: false
         type: boolean
+      release_kind:
+        description: "Required binary families: combined requires CLI and node; cli requires all five CLI platforms"
+        required: true
+        default: combined
+        type: choice
+        options: [combined, cli]
 
 permissions:
   contents: write
@@ -30,6 +36,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+
+      - name: Test finalizer rejection and release modes sequentially
+        run: node --test --test-concurrency=1 scripts/finalize-release.test.mjs
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test download integrity and archive rejection sequentially
+        run: python -m unittest discover -s scripts -p 'test_verify_cli_download.py'
 
       - name: Download current release assets
         env:
@@ -46,6 +62,8 @@ jobs:
           TAG_NAME: ${{ inputs.tag }}
           RELEASE_DIR: dist/release-assets
           OUT_DIR: dist/finalized
+          RELEASE_KIND: ${{ inputs.release_kind }}
+          PRERELEASE: ${{ inputs.prerelease }}
         run: node scripts/finalize-release.mjs
 
       - name: Upload aggregate release assets

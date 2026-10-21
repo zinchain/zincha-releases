@@ -1,0 +1,112 @@
+name: Verify CLI Prerelease Downloads
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Finalized CLI-only Vega prerelease tag"
+        required: true
+        type: string
+      sdk_source_commit:
+        description: "Full reviewed SDK source commit from the immutable tag"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  attestations: read
+
+concurrency:
+  group: cli-download-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            platform: linux-x86_64
+            extension: tar.gz
+          - os: ubuntu-24.04-arm
+            platform: linux-aarch64
+            extension: tar.gz
+          - os: macos-15-intel
+            platform: macos-x86_64
+            extension: tar.gz
+          - os: macos-15
+            platform: macos-aarch64
+            extension: tar.gz
+          - os: windows-2022
+            platform: windows-x86_64
+            extension: zip
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      TAG_NAME: ${{ inputs.tag }}
+      SDK_SOURCE: ${{ inputs.sdk_source_commit }}
+      PLATFORM: ${{ matrix.platform }}
+      EXTENSION: ${{ matrix.extension }}
+      GH_TOKEN: ${{ github.token }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: zinchain/zincha-sdk
+          ref: ${{ inputs.sdk_source_commit }}
+          path: sdk-source
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download the finalized public release artifacts
+        run: |
+          set -euo pipefail
+          [[ "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$SDK_SOURCE" =~ ^[0-9a-f]{40}$ ]]
+          mkdir -p evidence
+          gh api "repos/zinchain/zincha-releases/releases/tags/$TAG_NAME" > evidence/github-release.json
+          gh release download "$TAG_NAME" -R zinchain/zincha-releases --dir evidence \
+            --pattern "zincha-$TAG_NAME-$PLATFORM.$EXTENSION" \
+            --pattern "zincha-$TAG_NAME-$PLATFORM.build.json" \
+            --pattern SHA256SUMS --pattern release-manifest.json
+      - name: Verify checksums, source identity and archive contents
+        id: archive
+        run: |
+          python scripts/verify-cli-download.py --tag "$TAG_NAME" --platform "$PLATFORM" \
+            --source-commit "$SDK_SOURCE" --directory evidence
+      - name: Verify signed build provenance before execution
+        env:
+          ARCHIVE: ${{ steps.archive.outputs.archive }}
+        run: |
+          gh attestation verify "$ARCHIVE" --repo zinchain/zincha-sdk \
+            --signer-workflow zinchain/zincha-sdk/.github/workflows/release-binaries.yml \
+            --source-digest "$SDK_SOURCE" --deny-self-hosted-runners \
+            --format json > evidence/attestation-verification.json
+      - name: Execute the downloaded CLI and a live Vega transfer
+        env:
+          CLI_BINARY: ${{ steps.archive.outputs.binary }}
+        run: |
+          set -euo pipefail
+          "$CLI_BINARY" --version | tee evidence/version.txt
+          test "$(tr -d '\r\n' < evidence/version.txt)" = "zincha ${TAG_NAME#v}"
+          "$CLI_BINARY" --help > evidence/help.txt
+          python sdk-source/scripts/live-vega-transfer.py --binary "$CLI_BINARY" \
+            --timeout 120 --evidence-dir evidence/live > evidence/live.log 2>&1
+          cat evidence/live.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cli-download-${{ inputs.tag }}-${{ matrix.platform }}
+          path: |
+            evidence/*.json
+            evidence/*.txt
+            evidence/*.log
+            evidence/SHA256SUMS
+            evidence/live/
+          if-no-files-found: error
+          retention-days: 30
