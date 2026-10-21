@@ -19,6 +19,11 @@ does not replace or relabel the node release. The finalizer requires an explicit
 `release_kind=cli` selection; `combined` remains the default and still requires
 both Linux node archives. CLI-only releases reject accidental node archives.
 
+The current Vega download pairing is **CLI 0.1.2 + node 0.1.0**.
+The [CLI prerelease](https://github.com/zinchain/zincha-releases/releases/tag/v0.1.2)
+links directly to the unchanged [node release](https://github.com/zinchain/zincha-releases/releases/tag/v0.1.0).
+Use each version’s own checksums and manifest.
+
 The source repositories upload platform archives and per-build manifest
 fragments. The finalizer workflow in this repository validates the required
 asset set and publishes:
@@ -92,8 +97,26 @@ is its existing internal label. The binary release tag is `v0.1.0`. Use the
 archive's `VERSION` file and `release-manifest.json` to identify the exact source
 commit. The current public CLI reports `zincha 0.1.2`.
 
-See the [v0.1.0 build verification record](validation/v0.1.0.json) for source
-commits, successful build jobs, checksums, and the scope of validation.
+See the [v0.1.2 download verification record](validation/v0.1.2.json) for the
+current CLI source, archive/binary hashes, native environments and confirmed
+Vega transaction evidence. All five published downloads passed sequential native
+provenance, version/help, RPC, transaction submission, canonical confirmation,
+finality, balance and nonce checks. The same Apple Silicon archive also passed
+on the local macOS 15.7.3 machine. These are functional checks, not throughput or
+endurance qualification.
+
+| CLI platform | Native download and live Vega transfer |
+| --- | --- |
+| Linux x86_64 | Passed |
+| Linux ARM64 | Passed |
+| macOS Intel | Passed |
+| macOS Apple Silicon | Passed, plus local Mac verification |
+| Windows x64 | Passed |
+
+[Sequential native test workflow](https://github.com/zinchain/zincha-releases/actions/runs/39693787011).
+The [v0.1.0 build verification record](validation/v0.1.0.json) retains the node
+source, checksums and original validation scope; this CLI patch did not retest or
+rebuild the node archives.
 
 ## Verify
 

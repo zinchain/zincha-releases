@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "release_tag": "v0.1.2",
+  "release_kind": "cli",
+  "channel": "Vega testnet prerelease",
+  "status": "passed",
+  "source": {
+    "tag": "v0.1.2",
+    "source_repository": "zinchain/zincha-sdk",
+    "source_commit": "cfbfe18d4136b2a8f4f54042bbb7e1f32c358c90",
+    "runtime_identical_to_published_cargo_source": "4badcd430558aca3a89d10008e6c11d4bcbc9247",
+    "version": "0.1.2",
+    "channel": "Vega testnet prerelease"
+  },
+  "build_contract": {
+    "release_tag": "v0.1.2",
+    "source_commit": "cfbfe18d4136b2a8f4f54042bbb7e1f32c358c90",
+    "compiler": "Rust 1.94.0",
+    "command": "cargo build --release --locked -p zincha-cli --target <native-target>",
+    "cargo_build_jobs": 1,
+    "rust_test_threads": 1,
+    "platform_matrix_max_parallel": 1,
+    "source_file_sha256": {
+      "Cargo.lock": "1831884818de9fb001a7876273d0c2488ecce6385a2615a8ca2f4a84210823d5",
+      "Cargo.toml": "1b647cac0e2db8e9d23c4a53c69ca8fde4647216de369250ec84a1bff5e3a7a1",
+      "rust-toolchain.toml": "474342a18df37f923f59df43b1b90e6c0b0d6758612462bbc0dadbe37fe2cadf",
+      ".github/workflows/release-binaries.yml": "a828cebaad22b73888c00d0884a60b452e8e23bf0d0aacbcaf28870505b390ed",
+      "scripts/live-vega-transfer.py": "0f9088261a6c906738a0dc6a53116502c808842b2f8c92b0559a38787a08dd5c"
+    },
+    "build_workflow_run": "https://github.com/zinchain/zincha-sdk/actions/runs/39689284397",
+    "final_download_verification": "Each native runner downloads the finalized archive, verifies hashes, full source identity and signed provenance, then executes --version, --help, live RPC and a faucet-funded finalized transfer."
+  },
+  "build_run": "https://github.com/zinchain/zincha-sdk/actions/runs/39689284397",
+  "checks": {
+    "offline_gate": {
+      "rust_tests": 205,
+      "typescript_tests": 76,
+      "python_tests": 61,
+      "status": "passed"
+    },
+    "release_tools": {
+      "finalizer_tests": 14,
+      "download_verifier_tests": 7,
+      "workflow_lint": "passed",
+      "previous_combined_release_validation": "passed"
+    }
+  },
+  "scope": "CLI distribution and native functional validation. No node source or binary changes; no throughput/endurance claim.",
+  "platform_results": {
+    "linux-x86_64": {
+      "passed": true,
+      "tag": "v0.1.2",
+      "platform": "linux-x86_64",
+      "source_commit": "cfbfe18d4136b2a8f4f54042bbb7e1f32c358c90",
+      "archive_sha256": "1fdf4ba5a2c29ad6442484ece5fa03542a0393cbbe941064b5b06bdf8481ed17",
+      "binary_sha256": "415929dd6ad441e06ad860bf36df1703fca0b7f8c66e01831beee7f19ea8cf9c",
+      "runner": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+      "machine": "x86_64",
+      "scope": "Archive integrity and contents; native execution and provenance are separate workflow steps",
+      "status": "passed",
+      "chain_id": "zincha-vega-1",
+      "reported_node_version": "0.1.0",
+      "transaction_hash": "a939955bede30fb19514ee621db721702c547da05f032ceff1f17540ef87b274",
+      "block_hash": "61e72e424206c23be4cf816d4be1ed0c1e76f26ba32e6ff7621e68ec5b3770e1",
+      "block_height": 1108769,
+      "finalized_floor": 1108770,
+      "amount_micro_zin": 1000,
+      "fee_micro_zin": 30,
+      "balance_and_nonce_audit": "passed",
+      "exact_finalized_anchor": "passed",
+      "provenance": "passed; GitHub-hosted SDK release workflow and full source digest pinned",
+      "job_url": "https://github.com/zinchain/zincha-releases/actions/runs/39693787011/job/119546137240",
+      "evidence_archive_sha256": "a91f236d4f20c6befe2dcea30a56e261cc60f555a6063b329fef8461fdca3474"
+    },
+    "linux-aarch64": {
+      "passed": true,
+      "tag": "v0.1.2",
+      "platform": "linux-aarch64",
+      "source_commit": "cfbfe18d4136b2a8f4f54042bbb7e1f32c358c90",
+      "archive_sha256": "44bd689e31f56d83e68d64ca6978d77082a23ae206d810738b0a3070a6e5d48a",
+      "binary_sha256": "08161c85d4b44432c38e3ec6c2e4a3bb7abfd7733400a5c089fe8d52a825fdd4",
+      "runner": "Linux-7.0.0-1017-azure-aarch64-with-glibc2.39",
+      "machine": "aarch64",
+      "scope": "Archive integrity and contents; native execution and provenance are separate workflow steps",
+      "status": "passed",
+      "chain_id": "zincha-vega-1",
+      "reported_node_version": "0.1.0",
+      "transaction_hash": "47b78ea10df869208f99c1fa715148cb335a52ceafe73d82dd7b191b00db01e7",
+      "block_hash": "fe90d310de3ef7fd6bbe80519e3e1c2de7b8c0348af30844ed1229313d76f8ff",
+      "block_height": 1108799,
+      "finalized_floor": 1108799,
+      "amount_micro_zin": 1000,
+      "fee_micro_zin": 30,
+      "balance_and_nonce_audit": "passed",
+      "exact_finalized_anchor": "passed",
+      "provenance": "passed; GitHub-hosted SDK release workflow and full source digest pinned",
+      "job_url": "https://github.com/zinchain/zincha-releases/actions/runs/39693787011/job/119546136878",
+      "evidence_archive_sha256": "a91f236d4f20c6befe2dcea30a56e261cc60f555a6063b329fef8461fdca3474"
+    },
+    "macos-x86_64": {
+      "passed": true,
+      "tag": "v0.1.2",
+      "platform": "macos-x86_64",
+      "source_commit": "cfbfe18d4136b2a8f4f54042bbb7e1f32c358c90",
+      "archive_sha256": "174fbc59f643d5e896fe79ce0546df25d61f92e7d2b7171089594933b73e5c1f",
+      "binary_sha256": "be357c8ba675a270e2c0f800b7ab644a2b8da711a3ee71c384e7a0344e6b8579",
+      "runner": "macOS-15.7.9-x86_64-i386-64bit",
+      "machine": "x86_64",
+      "scope": "Archive integrity and contents; native execution and provenance are separate workflow steps",
+      "status": "passed",
+      "chain_id": "zincha-vega-1",
+      "reported_node_version": "0.1.0",
+      "transaction_hash": "d286fe94c2d70d5ffc69d74a1c8d0d4b86b937d37741fdcc13e44e898fb06e0b",
+      "block_hash": "8e40f5de486d910c86b0c92846b6f5e832eea87607c621175d38d83b570c5bb3",
+      "block_height": 1108850,
+      "finalized_floor": 1108850,
+      "amount_micro_zin": 1000,
+      "fee_micro_zin": 30,
+      "balance_and_nonce_audit": "passed",
+      "exact_finalized_anchor": "passed",
+      "provenance": "passed; GitHub-hosted SDK release workflow and full source digest pinned",
+      "job_url": "https://github.com/zinchain/zincha-releases/actions/runs/39693787011/job/119546137349",
+      "evidence_archive_sha256": "a91f236d4f20c6befe2dcea30a56e261cc60f555a6063b329fef8461fdca3474"
+    },
+    "macos-aarch64": {
+      "passed": true,
+      "tag": "v0.1.2",
+      "platform": "macos-aarch64",
+      "source_commit": "cfbfe18d4136b2a8f4f54042bbb7e1f32c358c90",
+      "archive_sha256": "2c54f1b70f841a0b26f83b1c3c45dfb41fac7a686da7d179a8c7b319ac5cfa1c",
+      "binary_sha256": "113159fc59db4db08e65cd9e50edd8d83f22add777ee223540998b44a745a714",
+      "runner": "macOS-15.7.9-arm64-arm-64bit",
+      "machine": "arm64",
+      "scope": "Archive integrity and contents; native execution and provenance are separate workflow steps",
+      "status": "passed",
+      "chain_id": "zincha-vega-1",
+      "reported_node_version": "0.1.0",
+      "transaction_hash": "baa37320290a49ed69048e56a72f795967ab97cbd38656e7013be793fff86bad",
+      "block_hash": "cd00bd329648056daed1b270fc9bd7d6ad60c82b67a7da2c30143b024c9bfa57",
+      "block_height": 1108879,
+      "finalized_floor": 1108880,
+      "amount_micro_zin": 1000,
+      "fee_micro_zin": 30,
+      "balance_and_nonce_audit": "passed",
+      "exact_finalized_anchor": "passed",
+      "provenance": "passed; GitHub-hosted SDK release workflow and full source digest pinned",
+      "job_url": "https://github.com/zinchain/zincha-releases/actions/runs/39693787011/job/119546137261",
+      "evidence_archive_sha256": "a91f236d4f20c6befe2dcea30a56e261cc60f555a6063b329fef8461fdca3474"
+    },
+    "windows-x86_64": {
+      "passed": true,
+      "tag": "v0.1.2",
+      "platform": "windows-x86_64",
+      "source_commit": "cfbfe18d4136b2a8f4f54042bbb7e1f32c358c90",
+      "archive_sha256": "e1b1b893dc43f142044cd3cb64f3d85b7dd903583f2d5a32846030152b159a44",
+      "binary_sha256": "b369023bedcb59ab4ae60d302443eb90da75197a8792f81e48c0680025c6589b",
+      "runner": "Windows-2022Server-10.0.20348-SP0",
+      "machine": "AMD64",
+      "scope": "Archive integrity and contents; native execution and provenance are separate workflow steps",
+      "status": "passed",
+      "chain_id": "zincha-vega-1",
+      "reported_node_version": "0.1.0",
+      "transaction_hash": "b4741ac5a3d569e0846f988ffd5838ac0fd6cf8889a136cee8fccf11962c5e5d",
+      "block_hash": "300cb5ac6ff8708a22f1fe2959075b86322e67451fbafcd96dd5f36e622b2107",
+      "block_height": 1108919,
+      "finalized_floor": 1108920,
+      "amount_micro_zin": 1000,
+      "fee_micro_zin": 30,
+      "balance_and_nonce_audit": "passed",
+      "exact_finalized_anchor": "passed",
+      "provenance": "passed; GitHub-hosted SDK release workflow and full source digest pinned",
+      "job_url": "https://github.com/zinchain/zincha-releases/actions/runs/39693787011/job/119546137159",
+      "evidence_archive_sha256": "a91f236d4f20c6befe2dcea30a56e261cc60f555a6063b329fef8461fdca3474"
+    }
+  },
+  "completed_at": "2026-10-21T23:35:08.682776+00:00",
+  "finalizer_run": "https://github.com/zinchain/zincha-releases/actions/runs/39693646044",
+  "native_verification_run": "https://github.com/zinchain/zincha-releases/actions/runs/39693787011",
+  "release_url": "https://github.com/zinchain/zincha-releases/releases/tag/v0.1.2",
+  "node_release": {
+    "version": "v0.1.0",
+    "changed": false,
+    "url": "https://github.com/zinchain/zincha-releases/releases/tag/v0.1.0",
+    "distribution": "Linked from CLI release notes, with original node checksums and manifest; not relabeled or rebuilt."
+  },
+  "release_assets": [
+    {
+      "name": "release-manifest.json",
+      "size": 3706,
+      "digest": "sha256:c403dad8c846b3753cecb6519671eaf115698d999d9c50cfc1205f2b404574b0",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/release-manifest.json"
+    },
+    {
+      "name": "SHA256SUMS",
+      "size": 1025,
+      "digest": "sha256:60688e35def96c0d407ab4b34524ecf1fff470e0782f177ce3268fd4a95c2579",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/SHA256SUMS"
+    },
+    {
+      "name": "zincha-v0.1.2-linux-aarch64.build.json",
+      "size": 613,
+      "digest": "sha256:de74f52529e03bc66a89bcbc4e9926948427f7164808ba67e2d7e20744602966",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-linux-aarch64.build.json"
+    },
+    {
+      "name": "zincha-v0.1.2-linux-aarch64.tar.gz",
+      "size": 5394615,
+      "digest": "sha256:44bd689e31f56d83e68d64ca6978d77082a23ae206d810738b0a3070a6e5d48a",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-linux-aarch64.tar.gz"
+    },
+    {
+      "name": "zincha-v0.1.2-linux-x86_64.build.json",
+      "size": 610,
+      "digest": "sha256:32317c4f8c6608a1b43eaa6572840d1b4321f8a1e48cfa6fa4f872362b5b7c0f",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-linux-x86_64.build.json"
+    },
+    {
+      "name": "zincha-v0.1.2-linux-x86_64.tar.gz",
+      "size": 5596868,
+      "digest": "sha256:1fdf4ba5a2c29ad6442484ece5fa03542a0393cbbe941064b5b06bdf8481ed17",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-linux-x86_64.tar.gz"
+    },
+    {
+      "name": "zincha-v0.1.2-macos-aarch64.build.json",
+      "size": 608,
+      "digest": "sha256:7d44c9e7b650b54ad1b9686a77500f4e38a0292a9b8e76c180f46f2f06b27ef9",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-macos-aarch64.build.json"
+    },
+    {
+      "name": "zincha-v0.1.2-macos-aarch64.tar.gz",
+      "size": 5154655,
+      "digest": "sha256:2c54f1b70f841a0b26f83b1c3c45dfb41fac7a686da7d179a8c7b319ac5cfa1c",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-macos-aarch64.tar.gz"
+    },
+    {
+      "name": "zincha-v0.1.2-macos-x86_64.build.json",
+      "size": 605,
+      "digest": "sha256:7f46dae894440af6a1fdc0c48e15a1c770fc4bb27d75704cd8f92fbebc3e4ce5",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-macos-x86_64.build.json"
+    },
+    {
+      "name": "zincha-v0.1.2-macos-x86_64.tar.gz",
+      "size": 5454072,
+      "digest": "sha256:174fbc59f643d5e896fe79ce0546df25d61f92e7d2b7171089594933b73e5c1f",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-macos-x86_64.tar.gz"
+    },
+    {
+      "name": "zincha-v0.1.2-windows-x86_64.build.json",
+      "size": 622,
+      "digest": "sha256:db9884597d6867dc7058640f81fd27ab0d494eb9f15d1dd206ba92c3ae316ecf",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-windows-x86_64.build.json"
+    },
+    {
+      "name": "zincha-v0.1.2-windows-x86_64.zip",
+      "size": 4727196,
+      "digest": "sha256:e1b1b893dc43f142044cd3cb64f3d85b7dd903583f2d5a32846030152b159a44",
+      "browser_download_url": "https://github.com/zinchain/zincha-releases/releases/download/v0.1.2/zincha-v0.1.2-windows-x86_64.zip"
+    }
+  ],
+  "sequential_live_test_intervals": [
+    {
+      "platform": "linux-x86_64",
+      "started_at": "2026-10-21T23:30:02Z",
+      "completed_at": "2026-10-21T23:30:13Z"
+    },
+    {
+      "platform": "linux-aarch64",
+      "started_at": "2026-10-21T23:30:31Z",
+      "completed_at": "2026-10-21T23:30:42Z"
+    },
+    {
+      "platform": "macos-x86_64",
+      "started_at": "2026-10-21T23:31:24Z",
+      "completed_at": "2026-10-21T23:31:32Z"
+    },
+    {
+      "platform": "macos-aarch64",
+      "started_at": "2026-10-21T23:31:52Z",
+      "completed_at": "2026-10-21T23:32:02Z"
+    },
+    {
+      "platform": "windows-x86_64",
+      "started_at": "2026-10-21T23:32:31Z",
+      "completed_at": "2026-10-21T23:32:43Z"
+    }
+  ],
+  "additional_local_macos_arm64": {
+    "passed": true,
+    "tag": "v0.1.2",
+    "platform": "macos-aarch64",
+    "source_commit": "cfbfe18d4136b2a8f4f54042bbb7e1f32c358c90",
+    "archive_sha256": "2c54f1b70f841a0b26f83b1c3c45dfb41fac7a686da7d179a8c7b319ac5cfa1c",
+    "binary_sha256": "113159fc59db4db08e65cd9e50edd8d83f22add777ee223540998b44a745a714",
+    "runner": "macOS-15.7.3-x86_64-i386-64bit",
+    "machine": "x86_64",
+    "scope": "Archive integrity and contents; native execution and provenance are separate workflow steps",
+    "status": "passed",
+    "chain_id": "zincha-vega-1",
+    "reported_node_version": "0.1.0",
+    "transaction_hash": "eed65a6b8ba4fd874fc04d42debdb2de38b0b24a156b66b4e0f922e931af133c",
+    "block_hash": "88f536124d87eecbe88fa46679892552d68bdfd54d352ba20aadf87a358bba9c",
+    "block_height": 1109013,
+    "finalized_floor": 1109014,
+    "amount_micro_zin": 1000,
+    "fee_micro_zin": 30,
+    "balance_and_nonce_audit": "passed",
+    "exact_finalized_anchor": "passed",
+    "provenance_binding": "Archive and extracted binary hashes exactly match the separately provenance-verified native runner artifacts.",
+    "environment": {
+      "platform": "macOS-15.7.3-x86_64-i386-64bit-Mach-O",
+      "machine": "x86_64",
+      "macos": "15.7.3",
+      "python": "3.14.6",
+      "note": "Python runs under Rosetta; the downloaded Apple Silicon CLI is a separate native arm64 process.",
+      "uname_from_python": "x86_64",
+      "uname_from_native_shell": "arm64"
+    }
+  },
+  "abi_requirements": {
+    "linux": [
+      {
+        "archive": "zincha-v0.1.2-linux-aarch64.tar.gz",
+        "required_symbol_versions": {
+          "libm.so.6": [
+            "GLIBC_2.29"
+          ],
+          "ld-linux-aarch64.so.1": [
+            "GLIBC_2.17"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.28",
+            "GLIBC_2.30",
+            "GLIBC_2.33",
+            "GLIBC_2.32",
+            "GLIBC_2.18",
+            "GLIBC_2.38",
+            "GLIBC_2.25",
+            "GLIBC_2.29",
+            "GLIBC_2.34",
+            "GLIBC_2.17",
+            "GLIBC_2.39"
+          ],
+          "libgcc_s.so.1": [
+            "GCC_3.0",
+            "GCC_4.2.0",
+            "GCC_3.3"
+          ]
+        },
+        "minimum_glibc_symbol_version": "2.39"
+      },
+      {
+        "archive": "zincha-v0.1.2-linux-x86_64.tar.gz",
+        "required_symbol_versions": {
+          "libgcc_s.so.1": [
+            "GCC_3.0",
+            "GCC_3.3",
+            "GCC_4.2.0"
+          ],
+          "libm.so.6": [
+            "GLIBC_2.29"
+          ],
+          "libc.so.6": [
+            "GLIBC_2.2.5",
+            "GLIBC_2.3",
+            "GLIBC_2.3.2",
+            "GLIBC_2.3.4",
+            "GLIBC_2.4",
+            "GLIBC_2.7",
+            "GLIBC_2.9",
+            "GLIBC_2.14",
+            "GLIBC_2.15",
+            "GLIBC_2.16",
+            "GLIBC_2.17",
+            "GLIBC_2.18",
+            "GLIBC_2.25",
+            "GLIBC_2.28",
+            "GLIBC_2.29",
+            "GLIBC_2.30",
+            "GLIBC_2.32",
+            "GLIBC_2.33",
+            "GLIBC_2.34",
+            "GLIBC_2.38",
+            "GLIBC_2.39"
+          ],
+          "ld-linux-x86-64.so.2": [
+            "GLIBC_2.3"
+          ]
+        },
+        "minimum_glibc_symbol_version": "2.39"
+      }
+    ],
+    "macos": [
+      {
+        "archive": "zincha-v0.1.2-macos-aarch64.tar.gz",
+        "load_commands": [
+          {
+            "minimum_macos": "11.0.0",
+            "sdk": "15.5.0"
+          },
+          {
+            "dylib": "/usr/lib/libiconv.2.dylib"
+          },
+          {
+            "dylib": "/usr/lib/libSystem.B.dylib"
+          }
+        ]
+      },
+      {
+        "archive": "zincha-v0.1.2-macos-x86_64.tar.gz",
+        "load_commands": [
+          {
+            "dylib": "/usr/lib/libiconv.2.dylib"
+          },
+          {
+            "dylib": "/usr/lib/libSystem.B.dylib"
+          }
+        ]
+      }
+    ],
+    "windows": {
+      "archive": "zincha-v0.1.2-windows-x86_64.zip",
+      "imported_dlls": [
+        "bcryptprimitives.dll",
+        "kernel32.dll",
+        "ws2_32.dll",
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "ntdll.dll",
+        "bcrypt.dll",
+        "advapi32.dll",
+        "VCRUNTIME140.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-environment-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-utility-l1-1-0.dll",
+        "api-ms-win-crt-locale-l1-1-0.dll"
+      ]
+    }
+  },
+  "evidence_storage": "Complete local evidence and downloaded archives: /Users/ryomaito/Downloads/zincha-cli-v0.1.2-release-20261021; GitHub workflow artifacts retained 30 days.",
+  "limitations": [
+    "Functional CLI validation, not throughput, endurance or node-release requalification.",
+    "Native platform testing covers the recorded operating systems, not all older OS versions.",
+    "Archive README is the source-tag README; current download and pairing instructions are in the release notes and repository README."
+  ]
+}
